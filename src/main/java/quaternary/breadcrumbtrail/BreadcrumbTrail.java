@@ -1,12 +1,16 @@
 package quaternary.breadcrumbtrail;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.*;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -22,18 +26,28 @@ public class BreadcrumbTrail {
 	public static List<Block> BLOCKS;
 	public static List<Item> ITEMS;
 	
+	@GameRegistry.ItemStackHolder(MODID + ":breadcrumb_pouch")
+	public static final ItemStack tabStack = ItemStack.EMPTY; 
+	
+	public static final CreativeTabs TAB = new CreativeTabs(MODID) {
+		@Override
+		public ItemStack getTabIconItem() {
+			return tabStack;
+		}
+	};
+	
 	static {
 		BLOCKS = new ArrayList<>();
-		
 		BLOCKS.add(new BlockBreadcrumb());
 		
 		ITEMS = new ArrayList<>();
-		
 		for(Block b : BLOCKS) {
 			ItemBlock ib = new ItemBlock(b);
 			ib.setRegistryName(b.getRegistryName());
 			ITEMS.add(ib);
 		}
+		
+		ITEMS.add(new ItemBreadcrumbPouch());
 	}
 	
 	@Mod.EventBusSubscriber(modid = MODID)
@@ -48,6 +62,11 @@ public class BreadcrumbTrail {
 		public static void items(RegistryEvent.Register<Item> e) {
 			IForgeRegistry<Item> reg = e.getRegistry();
 			reg.registerAll(ITEMS.toArray(new Item[0]));
+			
+			//crap spot but might as well
+			for(Item i : ITEMS) {
+				i.setCreativeTab(TAB);
+			}
 		}
 	}
 	
@@ -55,7 +74,10 @@ public class BreadcrumbTrail {
 	public static class ClientEventHandler {
 		@SubscribeEvent
 		public static void models(ModelRegistryEvent e) {
-			
+			for(Item i : ITEMS) {
+				ModelResourceLocation mrl = new ModelResourceLocation(i.getRegistryName(), "inventory");
+				ModelLoader.setCustomModelResourceLocation(i, 0, mrl);
+			}
 		}
 	}
 }
