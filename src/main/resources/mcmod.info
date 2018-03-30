@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "breadcrumbtrail",
+  "name": "Breadcrumb Trail",
+  "description": "Adds breadcrumbs!",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["quaternary"],
+  "credits": "Searge, for Modjnam :D",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
