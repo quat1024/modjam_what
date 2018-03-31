@@ -1,0 +1,17 @@
+breadcrumbtrail.crumbcount.one=1 crumb
+breadcrumbtrail.crumbcount.exactplural=%s crumbs
+breadcrumbtrail.crumbcount.few=A few crumbs
+breadcrumbtrail.crumbcount.handful=A handful of crumbs
+breadcrumbtrail.crumbcount.couple=A couple crumbs
+breadcrumbtrail.crumbcount.fair=A fair amount of crumbs
+breadcrumbtrail.crumbcount.sizable=A sizable number of crumbs
+breadcrumbtrail.crumbcount.lot=A lot of crumbs
+breadcrumbtrail.crumbcount.ton=A ton of crumbs
+
+breadcrumbtrail.open=Open
+breadcrumbtrail.closed=Closed
+
+tile.breadcrumbtrail.breadcrumb.name=Breadcrumb
+item.breadcrumbtrail.breadcrumb_pouch.name=Breadcrumb Pouch
+
+itemGroup.breadcrumbtrail=Breadcrumb Trail

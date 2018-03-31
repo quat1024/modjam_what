@@ -62,11 +62,6 @@ public class BreadcrumbTrail {
 		public static void items(RegistryEvent.Register<Item> e) {
 			IForgeRegistry<Item> reg = e.getRegistry();
 			reg.registerAll(ITEMS.toArray(new Item[0]));
-			
-			//crap spot but might as well
-			for(Item i : ITEMS) {
-				i.setCreativeTab(TAB);
-			}
 		}
 	}
 	

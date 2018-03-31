@@ -1,0 +1,14 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "breadcrumbtrail:item/pouch_closed"
+	},
+	"overrides": [
+		{
+			"predicate": {
+				"breadcrumbtrail:open": 1
+			},
+			"model": "breadcrumbtrail:item/breadcrumb_pouch_open"
+		}
+	]
+}
