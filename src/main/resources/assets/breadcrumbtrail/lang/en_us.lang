@@ -8,6 +8,9 @@ breadcrumbtrail.crumbcount.sizable=A sizable number of crumbs
 breadcrumbtrail.crumbcount.lot=A lot of crumbs
 breadcrumbtrail.crumbcount.ton=A ton of crumbs
 
+#& is replaced with section signs in-code
+breadcrumbtrail.crumbcount.hahawhat=&kMISSINGNO&r crumbs
+
 breadcrumbtrail.open=Open
 breadcrumbtrail.closed=Closed
 

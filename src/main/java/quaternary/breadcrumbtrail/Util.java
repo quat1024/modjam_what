@@ -45,6 +45,9 @@ public class Util {
 	//number formatting utils!
 	@SideOnly(Side.CLIENT)
 	public static String vagueCrumbCount(int crumbs) {
+		//hmm
+		if(crumbs < 0) return I18n.translateToLocal("breadcrumbtrail.crumbcount.hahawhat").replace('&', '\u00A7');
+		
 		if(crumbs == 1) return I18n.translateToLocal("breadcrumbtrail.crumbcount.one");
 		else if(crumbs <= 4) return I18n.translateToLocalFormatted("breadcrumbtrail.crumbcount.exactplural", crumbs);
 		
