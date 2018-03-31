@@ -28,19 +28,31 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 		ItemStack bag = findBag(inv);
 		ItemStack crumbs = findCrumbs(inv);
 		
-		return !bag.isEmpty() && !crumbs.isEmpty() && ItemBreadcrumbPouch.isOpen(bag);
+		if(bag.isEmpty() || crumbs.isEmpty() || !ItemBreadcrumbPouch.isOpen(bag)) return false;
+		
+		int bagCrumbs = ItemBreadcrumbPouch.getCrumbs(bag);
+		int toaddCrumbs = crumbs.getCount();
+		
+		return bagCrumbs + toaddCrumbs <= ItemBreadcrumbPouch.MAX_CRUMBS;
 	}
 	
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
-		ItemStack bag = findBag(inv).copy();
-		ItemStack crumbs = findCrumbs(inv).copy();
+		ItemStack bag = findBag(inv);
+		ItemStack crumbs = findCrumbs(inv);
 		
-		if(ItemBreadcrumbPouch.getCrumbs(bag) < ItemBreadcrumbPouch.MAX_CRUMBS) {
-			ItemBreadcrumbPouch.setCrumbs(bag, ItemBreadcrumbPouch.getCrumbs(bag) + 1);
-		}
+		int bagCrumbs = ItemBreadcrumbPouch.getCrumbs(bag);
+		int toaddCrumbs = crumbs.getCount();
 		
-		return bag;
+		ItemStack result = bag.copy();
+		ItemBreadcrumbPouch.setCrumbs(result, bagCrumbs + toaddCrumbs);
+		
+		int crumbIndex = findCrumbIndex(inv);
+		if(crumbIndex != -1) inv.setInventorySlotContents(crumbIndex, ItemStack.EMPTY);
+		
+		inv.markDirty();
+		
+		return result;
 	}
 	
 	@Override
@@ -52,6 +64,8 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;
 	}
+	
+	//The most beautiful code i have ever written
 	
 	private ItemStack findBag(InventoryCrafting inv) {
 		for(int i = 0; i < inv.getSizeInventory(); i++) {
@@ -75,5 +89,17 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 		}
 		
 		return ItemStack.EMPTY;
+	}
+	
+	private int findCrumbIndex(InventoryCrafting inv) {
+		for(int i = 0; i < inv.getSizeInventory(); i++) {
+			ItemStack stack = inv.getStackInSlot(i);
+			if(stack.isEmpty()) continue;
+			Item item = stack.getItem();
+			
+			if(item.equals(crumbItem)) return i;
+		}
+		
+		return -1;
 	}
 }

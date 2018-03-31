@@ -1,11 +1,16 @@
 package quaternary.breadcrumbtrail;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -16,15 +21,18 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemBreadcrumbPouch extends Item {
-	public static final int MAX_CRUMBS = 1024;
+	public static final int MAX_CRUMBS = 512;
 	
 	public ItemBreadcrumbPouch() {
 		setRegistryName(new ResourceLocation(BreadcrumbTrail.MODID, "breadcrumb_pouch"));
 		setUnlocalizedName(BreadcrumbTrail.MODID + ".breadcrumb_pouch");
 		setCreativeTab(BreadcrumbTrail.TAB);
+		setMaxStackSize(1);
 		
 		addPropertyOverride(new ResourceLocation(BreadcrumbTrail.MODID, "open"), (stack, world, living) -> isOpen(stack) ? 1 : 0);
 	}
+	
+	////////////////////////////// open and close the bag
 	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
@@ -35,7 +43,39 @@ public class ItemBreadcrumbPouch extends Item {
 		return new ActionResult<>(EnumActionResult.SUCCESS, heldStack);
 	}
 	
-	//////////////////////////////
+	////////////////////////////// leak breadcrumbs all over the floor
+	
+	@GameRegistry.ObjectHolder(BreadcrumbTrail.MODID + ":breadcrumb")
+	public static final Block BREADCRUMB_BLOCK = Blocks.DIAMOND_BLOCK;
+	
+	@Override
+	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
+		if(world.isRemote || !isOpen(stack) || getCrumbs(stack) == 0 || !(entity instanceof EntityPlayer)) return;
+		
+		BlockPos entPos = entity.getPosition();
+		BlockPos lastCrumbPos = getLastPosition(stack);
+		
+		int dx = entPos.getX() - lastCrumbPos.getX();
+		int dz = entPos.getZ() - lastCrumbPos.getZ();
+		dx *= dx; dz *= dz;
+		int distSquared = dx + dz;
+		
+		if(distSquared >= 9 * 9) {
+			//is it ok to place one here?
+			if(world.getBlockState(entPos).getBlock() instanceof BlockBreadcrumb) return;
+			if(!world.getBlockState(entPos).getBlock().isReplaceable(world, entPos)) return;
+			if(!BREADCRUMB_BLOCK.canPlaceBlockAt(world, entPos)) return;
+			
+			//place a crumb
+			setCrumbs(stack, getCrumbs(stack) - 1);
+			setLastPosition(stack, entPos);
+			world.setBlockState(entPos, BREADCRUMB_BLOCK.getDefaultState(), 3);
+			world.playSound(null, entPos, SoundEvents.BLOCK_STONE_STEP, SoundCategory.BLOCKS, 0.7f, 2f);
+		}
+	}
+	
+	
+	////////////////////////////// display
 	
 	@GameRegistry.ItemStackHolder(BreadcrumbTrail.MODID + ":breadcrumb_pouch")
 	public static final ItemStack pouchStack = ItemStack.EMPTY;
@@ -87,9 +127,10 @@ public class ItemBreadcrumbPouch extends Item {
 	
 	public static final String OPEN_KEY = "OpenBag";
 	public static final String CRUMB_KEY = "Crumbs";
+	public static final String POS_KEY = "LastCrumbPosition";
 	
 	public static boolean isOpen(ItemStack stack) {
-		return Util.getItemNBTBoolean(stack, "OpenBag", false);
+		return Util.getItemNBTBoolean(stack, OPEN_KEY, false);
 	}
 	
 	public static void setOpen(ItemStack stack, boolean open) {
@@ -97,10 +138,18 @@ public class ItemBreadcrumbPouch extends Item {
 	}
 	
 	public static int getCrumbs(ItemStack stack) {
-		return Util.getItemNBTInt(stack, "Crumbs", 0);
+		return Util.getItemNBTInt(stack, CRUMB_KEY, 0);
 	}
 	
 	public static void setCrumbs(ItemStack stack, int crumbs) {
 		Util.setItemNBTInt(stack, CRUMB_KEY, crumbs);
+	}
+	
+	public static BlockPos getLastPosition(ItemStack stack) {
+		return Util.getItemNBTBlockPos(stack, POS_KEY, new BlockPos(0,0,0));
+	}
+	
+	public static void setLastPosition(ItemStack stack, BlockPos pos) {
+		Util.setItemNBTBlockPos(stack, POS_KEY, pos);
 	}
 }

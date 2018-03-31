@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
@@ -23,6 +24,16 @@ public class BlockBreadcrumb extends Block {
 		
 		setHardness(0.05f);
 		setResistance(0.05f);
+	}
+	
+	@Override
+	public boolean canPlaceBlockAt(World world, BlockPos pos) {
+		IBlockState downState = world.getBlockState(pos.down());
+		Block downBlock = downState.getBlock();
+		
+		Material thisMaterial = world.getBlockState(pos).getMaterial();
+		
+		return super.canPlaceBlockAt(world, pos) && downBlock.canPlaceTorchOnTop(downState, world, pos.down()) && thisMaterial != Material.WATER && thisMaterial != Material.LAVA;
 	}
 	
 	public static final AxisAlignedBB AABB = new AxisAlignedBB(0, 0, 0, 1, 2/16d, 1);

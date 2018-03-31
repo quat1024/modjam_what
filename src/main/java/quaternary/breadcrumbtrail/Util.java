@@ -2,6 +2,8 @@ package quaternary.breadcrumbtrail;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -34,6 +36,20 @@ public class Util {
 		stack.getTagCompound().setInteger(key, val);
 	}
 	
+	public static BlockPos getItemNBTBlockPos(ItemStack stack, String key, BlockPos def) {
+		verifyTag(stack);
+		if(!hasKey(stack, key)) return def;
+		
+		NBTTagCompound posTag = stack.getTagCompound().getCompoundTag(key);
+		return NBTUtil.getPosFromTag(posTag);
+	}
+	
+	public static void setItemNBTBlockPos(ItemStack stack, String key, BlockPos val) {
+		verifyTag(stack);
+		
+		stack.getTagCompound().setTag(key, NBTUtil.createPosTag(val));
+	}
+	
 	static void verifyTag(ItemStack stack) {
 		if(!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
 	}
@@ -58,8 +74,8 @@ public class Util {
 		else if (crumbs <= 25) qualifier = "handful";
 		else if (crumbs <= 40) qualifier = "couple";
 		else if (crumbs <= 100) qualifier = "fair";
-		else if (crumbs <= 300) qualifier = "sizable";
-		else if (crumbs <= 700) qualifier = "lot";
+		else if (crumbs <= 150) qualifier = "sizable";
+		else if (crumbs <= 300) qualifier = "lot";
 		else qualifier = "ton";
 		
 		return I18n.translateToLocal("breadcrumbtrail.crumbcount." + qualifier);
