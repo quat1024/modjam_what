@@ -65,6 +65,13 @@ public class BreadcrumbTrail {
 			IForgeRegistry<Item> reg = e.getRegistry();
 			reg.registerAll(ITEMS.toArray(new Item[0]));
 		}
+		
+		@SubscribeEvent
+		public static void recipes(RegistryEvent.Register<IRecipe> e) {
+			IForgeRegistry<IRecipe> reg = e.getRegistry();
+			
+			reg.register(new RecipeFillPouch());
+		}
 	}
 	
 	@Mod.EventBusSubscriber(modid = MODID, value = Side.CLIENT)
