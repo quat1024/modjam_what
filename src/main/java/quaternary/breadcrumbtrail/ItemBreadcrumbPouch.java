@@ -69,6 +69,7 @@ public class ItemBreadcrumbPouch extends Item {
 	//well it's the color of bread, so.
 	@Override
 	public int getRGBDurabilityForDisplay(ItemStack stack) {
+		if(getDurabilityForDisplay(stack) <= 0.1d) return 0xee4422;
 		return 0x844f2e;
 	}
 	

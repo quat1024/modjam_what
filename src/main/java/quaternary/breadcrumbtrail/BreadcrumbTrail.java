@@ -43,6 +43,8 @@ public class BreadcrumbTrail {
 		ITEMS = new ArrayList<>();
 		for(Block b : BLOCKS) {
 			ItemBlock ib = new ItemBlock(b);
+			//At this point, I start to wonder why I'm doing this.
+			//The mod ony adds one block, for crying out loud.
 			ib.setRegistryName(b.getRegistryName());
 			ITEMS.add(ib);
 		}

@@ -10,6 +10,7 @@ breadcrumbtrail.crumbcount.lot=A lot of crumbs
 breadcrumbtrail.crumbcount.ton=A ton of crumbs
 
 #& is replaced with section signs in-code
+#idk... didn't want to run in to weird encoding issues
 breadcrumbtrail.crumbcount.hahawhat=&kMISSINGNO&r crumbs
 
 breadcrumbtrail.open=Open
