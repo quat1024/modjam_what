@@ -3,11 +3,13 @@ package quaternary.breadcrumbtrail;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.passive.EntityParrot;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -71,6 +73,15 @@ public class BreadcrumbTrail {
 			IForgeRegistry<IRecipe> reg = e.getRegistry();
 			
 			reg.register(new RecipeFillPouch());
+		}
+		
+		//But wait, there's more!
+		@SubscribeEvent
+		public static void joinWorld(EntityJoinWorldEvent e) {
+			if(e.getEntity() instanceof EntityParrot) {
+				EntityParrot parrot = (EntityParrot) e.getEntity();
+				parrot.tasks.addTask(10, new EntityAIEatBreadcrumb(parrot));
+			}
 		}
 	}
 	
