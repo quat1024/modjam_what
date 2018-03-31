@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"SBS",
+		"LCL",
+		"SLS"
+	],
+	"key": {
+		"S": {
+			"item": "minecraft:stick"
+		},
+		"B": {
+			"item": "breadcrumbtrail:breadcrumb"
+		},
+		"L": {
+			"item": "minecraft:leather"
+		},
+		"C": {
+			"type": "forge:ore_dict",
+			"ore": "chestWood"
+		}
+	},
+	"result": {
+		"item": "breadcrumbtrail:breadcrumb_pouch"
+	}
+}
