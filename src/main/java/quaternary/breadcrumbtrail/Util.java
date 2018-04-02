@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -79,5 +80,10 @@ public class Util {
 		else qualifier = "ton";
 		
 		return I18n.translateToLocal("breadcrumbtrail.crumbcount." + qualifier);
+	}
+	
+	//hah!
+	public static String italicise(String in) {
+		return TextFormatting.ITALIC + in + TextFormatting.RESET;
 	}
 }

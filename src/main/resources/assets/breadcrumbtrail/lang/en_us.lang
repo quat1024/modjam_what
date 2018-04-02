@@ -16,7 +16,12 @@ breadcrumbtrail.crumbcount.hahawhat=&kMISSINGNO&r crumbs
 breadcrumbtrail.open=Open
 breadcrumbtrail.closed=Closed
 
+breadcrumbtrail.breadcrumb_pouch.hint1=%s to open and close
+breadcrumbtrail.breadcrumb_pouch.hint2=When open, fill with crumbs by crafting
+
 tile.breadcrumbtrail.breadcrumb.name=Breadcrumb
 item.breadcrumbtrail.breadcrumb_pouch.name=Breadcrumb Pouch
 
 itemGroup.breadcrumbtrail=Breadcrumb Trail
+
+stat.breadcrumbtrail.leavecrumb=Breadcrumbs Left

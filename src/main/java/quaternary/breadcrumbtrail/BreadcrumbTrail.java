@@ -9,6 +9,9 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.stats.StatBase;
+import net.minecraft.stats.StatBasic;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -41,6 +44,8 @@ public class BreadcrumbTrail {
 			return tabStack;
 		}
 	};
+	
+	public static final StatBase LEAVE_BREADCRUMB_STAT = new StatBasic("stat.breadcrumbtrail.leavecrumb", new TextComponentTranslation("stat.breadcrumbtrail.leavecrumb")).initIndependentStat().registerStat();
 	
 	static {
 		BLOCKS = new ArrayList<>();

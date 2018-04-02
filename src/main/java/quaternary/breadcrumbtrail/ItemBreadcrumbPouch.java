@@ -1,6 +1,7 @@
 package quaternary.breadcrumbtrail;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -11,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -40,7 +42,15 @@ public class ItemBreadcrumbPouch extends Item {
 		
 		boolean isOpen = isOpen(heldStack);
 		setOpen(heldStack, !isOpen);
+		//make sure it doesnt instantly place a crumb
+		setLastPosition(heldStack, player.getPosition());
+		
 		return new ActionResult<>(EnumActionResult.SUCCESS, heldStack);
+	}
+	
+	@Override
+	public void onCreated(ItemStack stack, World worldIn, EntityPlayer player) {
+		setLastPosition(stack, player.getPosition());
 	}
 	
 	////////////////////////////// leak breadcrumbs all over the floor
@@ -71,6 +81,8 @@ public class ItemBreadcrumbPouch extends Item {
 			setLastPosition(stack, entPos);
 			world.setBlockState(entPos, BREADCRUMB_BLOCK.getDefaultState(), 3);
 			world.playSound(null, entPos, SoundEvents.BLOCK_STONE_STEP, SoundCategory.BLOCKS, 0.7f, 2f);
+			
+			((EntityPlayer) entity).addStat(BreadcrumbTrail.LEAVE_BREADCRUMB_STAT, 1);
 		}
 	}
 	
@@ -119,6 +131,15 @@ public class ItemBreadcrumbPouch extends Item {
 		String vagueCount = Util.vagueCrumbCount(getCrumbs(stack));
 		tooltip.add(vagueCount);
 		tooltip.add(I18n.translateToLocal(isOpen(stack) ? "breadcrumbtrail.open" : "breadcrumbtrail.closed"));
+		
+		if(getCrumbs(stack) == 0) {
+			tooltip.add("");
+			
+			String useBtnString = Minecraft.getMinecraft().gameSettings.keyBindUseItem.getDisplayName();
+			
+			tooltip.add(Util.italicise(I18n.translateToLocalFormatted("breadcrumbtrail.breadcrumb_pouch.hint1", useBtnString)));
+			tooltip.add(Util.italicise(I18n.translateToLocal("breadcrumbtrail.breadcrumb_pouch.hint2")));
+		}
 		
 		super.addInformation(stack, world, tooltip, flag);
 	}
