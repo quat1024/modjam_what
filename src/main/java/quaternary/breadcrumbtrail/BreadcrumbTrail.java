@@ -107,7 +107,10 @@ public class BreadcrumbTrail {
 					//mehhh cant think of a good sound
 					((EntityWolf) living).tasks.addTask(8, new EntityAIEatBreadcrumb(living, SoundEvents.ENTITY_WOLF_AMBIENT, 40));
 				} else if(living instanceof EntityRabbit) {
-					((EntityRabbit) living).tasks.addTask(6, new EntityAIEatBreadcrumb(living, SoundEvents.ENTITY_RABBIT_ATTACK, 30));
+					//NOTE TO SELF do not use entity_rabbit_attack
+					//oh no
+					//i can never unhear it
+					((EntityRabbit) living).tasks.addTask(6, new EntityAIEatBreadcrumb(living, null, 30));
 				}
 			}
 		}
