@@ -6,6 +6,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -97,12 +98,16 @@ public class BreadcrumbTrail {
 				EntityLiving living = (EntityLiving) ent;
 				
 				if(living instanceof EntityParrot) {
-					((EntityParrot) living).tasks.addTask(10, new EntityAIEatBreadcrumb(living));
+					//btw parrots here have a higher chance because they are a bit slower to move
+					//the other animals outrun them all the time!! so let's give them some help
+					((EntityParrot) living).tasks.addTask(4, new EntityAIEatBreadcrumb(living, SoundEvents.ENTITY_PARROT_EAT, 20));
 				} else if(living instanceof EntityOcelot) {
-					((EntityOcelot) living).tasks.addTask(10, new EntityAIEatBreadcrumb(living));
+					((EntityOcelot) living).tasks.addTask(4, new EntityAIEatBreadcrumb(living, null, 50));
 				} else if(living instanceof EntityWolf) {
-					((EntityWolf) living).tasks.addTask(10, new EntityAIEatBreadcrumb(living));
-					
+					//mehhh cant think of a good sound
+					((EntityWolf) living).tasks.addTask(8, new EntityAIEatBreadcrumb(living, SoundEvents.ENTITY_WOLF_AMBIENT, 40));
+				} else if(living instanceof EntityRabbit) {
+					((EntityRabbit) living).tasks.addTask(6, new EntityAIEatBreadcrumb(living, SoundEvents.ENTITY_RABBIT_ATTACK, 30));
 				}
 			}
 		}

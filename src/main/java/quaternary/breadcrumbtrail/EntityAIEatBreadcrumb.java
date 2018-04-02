@@ -11,6 +11,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class EntityAIEatBreadcrumb extends EntityAIBase {
@@ -27,14 +28,23 @@ public class EntityAIEatBreadcrumb extends EntityAIBase {
 	//Should I instantly look again for crumbs after eating one?
 	boolean immediatelyRetryFlag = false;
 	
-	public EntityAIEatBreadcrumb(EntityLiving breadEater) {
+	SoundEvent eatSound = SoundEvents.ENTITY_GENERIC_EAT;
+	int chance = 30;
+	
+	public EntityAIEatBreadcrumb(EntityLiving breadEater, @Nullable SoundEvent eatSound, int chance) {
 		this.breadEater = breadEater;
 		world = breadEater.world;
+		
+		if(eatSound != null) {
+			this.eatSound = eatSound; 
+		}
+		
+		this.chance = chance;
 	}
 	
 	@Override
 	public boolean shouldExecute() {
-		if(immediatelyRetryFlag || breadEater.getRNG().nextInt(30) == 0) {
+		if(immediatelyRetryFlag || breadEater.getRNG().nextInt(chance) == 0) {
 			cacheNearbyCrumbs = findNearbyCrumbs(breadEater.getPosition());
 			immediatelyRetryFlag = false;
 			return !cacheNearbyCrumbs.isEmpty();
@@ -84,20 +94,10 @@ public class EntityAIEatBreadcrumb extends EntityAIBase {
 		if (eatCrumbTimer == 0 && isCrumb(world.getBlockState(crumbPos))){
 			world.destroyBlock(crumbPos, false);
 			
-			SoundEvent eatSound;
-			if(breadEater instanceof EntityParrot) {
-				((EntityParrot)breadEater).flap = 1;
-				eatSound = SoundEvents.ENTITY_PARROT_EAT;
-			} else if (breadEater instanceof EntityOcelot) {
-				eatSound = SoundEvents.ENTITY_CAT_PURR;
-			} else if (breadEater instanceof EntityWolf) {
-				eatSound = SoundEvents.ENTITY_WOLF_STEP;
-			} else eatSound = SoundEvents.ENTITY_GENERIC_EAT;
-			
-			world.playSound(null, crumbPos, eatSound, breadEater.getSoundCategory(), .7f, 1f);
+			world.playSound(null, crumbPos, eatSound, breadEater.getSoundCategory(), .4f, 1f);
 			
 			crumbCheckTimer = 0; //done executing task
-			immediatelyRetryFlag = true;
+			immediatelyRetryFlag = true; //look for more crumbs next tick!
 		}
 	}
 	
