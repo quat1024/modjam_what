@@ -1,4 +1,4 @@
-package quaternary.breadcrumbtrail;
+package quaternary.breadcrumbtrail.item;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -12,12 +12,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import quaternary.breadcrumbtrail.*;
+import quaternary.breadcrumbtrail.Util;
+import quaternary.breadcrumbtrail.block.BlockBreadcrumb;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -86,7 +88,6 @@ public class ItemBreadcrumbPouch extends Item {
 		}
 	}
 	
-	
 	////////////////////////////// display
 	
 	@GameRegistry.ItemStackHolder(BreadcrumbTrail.MODID + ":breadcrumb_pouch")
@@ -108,9 +109,12 @@ public class ItemBreadcrumbPouch extends Item {
 		}
 	}
 	
+	//used so there's no ugly bar in creative mode
+	public static final String HIDE_BAR_KEY = "HideBar";
+	
 	@Override
 	public boolean showDurabilityBar(ItemStack stack) {
-		return true;
+		return !Util.getItemNBTBoolean(stack, HIDE_BAR_KEY, false);
 	}
 	
 	@Override

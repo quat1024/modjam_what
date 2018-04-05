@@ -2,12 +2,13 @@ package quaternary.breadcrumbtrail;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.passive.*;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatBasic;
@@ -23,6 +24,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
+import quaternary.breadcrumbtrail.ai.EntityAIEatBreadcrumb;
+import quaternary.breadcrumbtrail.block.BlockBreadcrumb;
+import quaternary.breadcrumbtrail.item.ItemBreadcrumbPouch;
+import quaternary.breadcrumbtrail.recipe.RecipeFillPouch;
 
 import java.util.*;
 
@@ -35,15 +40,7 @@ public class BreadcrumbTrail {
 	public static List<Block> BLOCKS;
 	public static List<Item> ITEMS;
 	
-	@GameRegistry.ItemStackHolder(MODID + ":breadcrumb_pouch")
-	public static final ItemStack tabStack = ItemStack.EMPTY; 
-	
-	public static final CreativeTabs TAB = new CreativeTabs(MODID) {
-		@Override
-		public ItemStack getTabIconItem() {
-			return tabStack;
-		}
-	};
+	public static final BreadcrumbCreative TAB = new BreadcrumbCreative();
 	
 	public static final StatBase LEAVE_BREADCRUMB_STAT = new StatBasic("stat.breadcrumbtrail.leavecrumb", new TextComponentTranslation("stat.breadcrumbtrail.leavecrumb")).initIndependentStat().registerStat();
 	

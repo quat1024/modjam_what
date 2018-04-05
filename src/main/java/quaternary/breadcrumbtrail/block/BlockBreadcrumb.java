@@ -1,4 +1,4 @@
-package quaternary.breadcrumbtrail;
+package quaternary.breadcrumbtrail.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -14,6 +14,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import quaternary.breadcrumbtrail.BreadcrumbTrail;
 
 import javax.annotation.Nullable;
 import java.util.Random;

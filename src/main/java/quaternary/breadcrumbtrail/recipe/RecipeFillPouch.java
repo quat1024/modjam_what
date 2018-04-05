@@ -1,4 +1,4 @@
-package quaternary.breadcrumbtrail;
+package quaternary.breadcrumbtrail.recipe;
 
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
@@ -9,6 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import quaternary.breadcrumbtrail.BreadcrumbTrail;
+import quaternary.breadcrumbtrail.item.ItemBreadcrumbPouch;
 
 public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 	public RecipeFillPouch() {

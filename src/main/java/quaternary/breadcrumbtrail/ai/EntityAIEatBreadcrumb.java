@@ -1,15 +1,13 @@
-package quaternary.breadcrumbtrail;
+package quaternary.breadcrumbtrail.ai;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.passive.*;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import quaternary.breadcrumbtrail.block.BlockBreadcrumb;
 
 import javax.annotation.Nullable;
 import java.util.*;
