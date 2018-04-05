@@ -28,9 +28,8 @@ public class ItemBreadcrumbPouch extends Item {
 	public static final int MAX_CRUMBS = 512;
 	
 	public ItemBreadcrumbPouch() {
-		setRegistryName(new ResourceLocation(BreadcrumbTrail.MODID, "breadcrumb_pouch"));
-		setUnlocalizedName(BreadcrumbTrail.MODID + ".breadcrumb_pouch");
-		setCreativeTab(BreadcrumbTrail.TAB);
+		Util.setUpItem(this, "breadcrumb_pouch");
+		
 		setMaxStackSize(1);
 		
 		addPropertyOverride(new ResourceLocation(BreadcrumbTrail.MODID, "open"), (stack, world, living) -> isOpen(stack) ? 1 : 0);

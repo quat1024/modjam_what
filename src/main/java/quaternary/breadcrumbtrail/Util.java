@@ -1,16 +1,24 @@
 package quaternary.breadcrumbtrail;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class Util {
+public class Util {	
 	//item utils!
+	public static void setUpItem(Item i, String regName) {
+		i.setRegistryName(new ResourceLocation(BreadcrumbTrail.MODID, regName));
+		i.setUnlocalizedName(BreadcrumbTrail.MODID + "." + regName);
+		i.setCreativeTab(BreadcrumbTrail.TAB);
+	}
+	
 	public static boolean getItemNBTBoolean(ItemStack stack, String key, boolean def) {
 		verifyTag(stack);
 		if(!hasKey(stack, key)) return def;
