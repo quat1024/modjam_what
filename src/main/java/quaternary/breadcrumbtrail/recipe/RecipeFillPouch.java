@@ -8,9 +8,11 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import quaternary.breadcrumbtrail.BreadcrumbTrail;
-import quaternary.breadcrumbtrail.item.ItemBreadcrumbPouch;
+import quaternary.breadcrumbtrail.item.pouch.ItemBreadcrumbPouch;
 
 public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 	public RecipeFillPouch() {
@@ -32,10 +34,11 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 		
 		if(bag.isEmpty() || crumbs.isEmpty() || !ItemBreadcrumbPouch.isOpen(bag)) return false;
 		
-		int bagCrumbs = ItemBreadcrumbPouch.getCrumbs(bag);
-		int toaddCrumbs = crumbs.getCount();
+		IItemHandler handler = bag.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 		
-		return bagCrumbs + toaddCrumbs <= ItemBreadcrumbPouch.MAX_CRUMBS;
+		ItemStack leftover = handler.insertItem(0, crumbs, true);
+		
+		return !ItemStack.areItemStacksEqual(crumbs, leftover);
 	}
 	
 	@Override
@@ -43,16 +46,12 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 		ItemStack bag = findBag(inv);
 		ItemStack crumbs = findCrumbs(inv);
 		
-		int bagCrumbs = ItemBreadcrumbPouch.getCrumbs(bag);
-		int toaddCrumbs = crumbs.getCount();
-		
 		ItemStack result = bag.copy();
-		ItemBreadcrumbPouch.setCrumbs(result, bagCrumbs + toaddCrumbs);
+		IItemHandler resultHandler = result.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		ItemStack leftover = resultHandler.insertItem(0, crumbs, false);
 		
 		int crumbIndex = findCrumbIndex(inv);
-		if(crumbIndex != -1) inv.setInventorySlotContents(crumbIndex, ItemStack.EMPTY);
-		
-		inv.markDirty();
+		if(crumbIndex != -1) inv.setInventorySlotContents(crumbIndex, leftover);
 		
 		return result;
 	}

@@ -7,8 +7,8 @@
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["quaternary"],
-  "credits": "Searge, for Modjnam :D",
+  "authorList": ["quaternary", "towerofnix", "Spazmunki13"],
+  "credits": "Includes art from towerofnix and Spazmunki13!",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

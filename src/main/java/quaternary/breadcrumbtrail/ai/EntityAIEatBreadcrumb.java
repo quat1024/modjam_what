@@ -13,21 +13,21 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class EntityAIEatBreadcrumb extends EntityAIBase {
-	EntityLiving breadEater;
-	World world;
-	List<BlockPos> cacheNearbyCrumbs;
+	private EntityLiving breadEater;
+	private World world;
+	private List<BlockPos> cacheNearbyCrumbs;
 	
 	//How long I will check whether I am inside a crumb block.
-	int crumbCheckTimer = 0;
+	private int crumbCheckTimer = 0;
 	
 	//How long until I can eat the crumb after I enter its block space.
-	int eatCrumbTimer = 0;
+	private int eatCrumbTimer = 0;
 	
 	//Should I instantly look again for crumbs after eating one?
-	boolean immediatelyRetryFlag = false;
+	private boolean immediatelyRetryFlag = false;
 	
 	SoundEvent eatSound = SoundEvents.ENTITY_GENERIC_EAT;
-	int chance = 30;
+	private int chance = 30;
 	
 	public EntityAIEatBreadcrumb(EntityLiving breadEater, @Nullable SoundEvent eatSound, int chance) {
 		this.breadEater = breadEater;

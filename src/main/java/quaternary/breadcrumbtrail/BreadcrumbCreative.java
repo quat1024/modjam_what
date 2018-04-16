@@ -3,7 +3,7 @@ package quaternary.breadcrumbtrail;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import quaternary.breadcrumbtrail.item.ItemBreadcrumbPouch;
+import quaternary.breadcrumbtrail.item.pouch.ItemBreadcrumbPouch;
 
 public class BreadcrumbCreative extends CreativeTabs {
 	@GameRegistry.ItemStackHolder(

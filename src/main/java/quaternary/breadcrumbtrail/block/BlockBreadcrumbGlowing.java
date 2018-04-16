@@ -13,6 +13,11 @@ public class BlockBreadcrumbGlowing extends BlockBreadcrumbBase {
 	}
 	
 	@Override
+	int getDurabilityBarColor() {
+		return 0xf4f75b; //yellowish
+	}
+	
+	@Override
 	public int getLightValue(IBlockState state) {
 		return 4;
 	}

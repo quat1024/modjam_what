@@ -21,7 +21,8 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 import quaternary.breadcrumbtrail.block.*;
-import quaternary.breadcrumbtrail.item.ItemBreadcrumbPouch;
+import quaternary.breadcrumbtrail.item.ItemBreadcrumb;
+import quaternary.breadcrumbtrail.item.pouch.ItemBreadcrumbPouch;
 import quaternary.breadcrumbtrail.item.ItemSimple;
 import quaternary.breadcrumbtrail.recipe.RecipeFillPouch;
 
@@ -31,7 +32,7 @@ import java.util.*;
 public class BreadcrumbTrail {
 	public static final String MODID = "breadcrumbtrail";
 	public static final String NAME = "Breadcrumb Trail";
-	public static final String VERSION = "1.0.0";
+	public static final String VERSION = "1.1.0";
 	
 	public static final BreadcrumbCreative TAB = new BreadcrumbCreative();
 	
@@ -41,6 +42,8 @@ public class BreadcrumbTrail {
 	
 	public static List<Block> BLOCKS = new ArrayList<>();
 	public static List<Item> ITEMS = new ArrayList<>();
+	
+	public static final boolean DEBUGEROO = true;
 	
 	static {
 		//do this first so it shows first in creative
@@ -52,9 +55,7 @@ public class BreadcrumbTrail {
 		for(BlockBreadcrumbBase crumb : CRUMBS) {
 			BlockBase b = crumb.build();
 			BLOCKS.add(b);
-			
-			//                         majong pls
-			ITEMS.add(new ItemBlock(b).setRegistryName(b.getRegistryName()));
+			ITEMS.add(new ItemBreadcrumb(b));
 		}
 		
 		ITEMS.add(new ItemSimple("glowstone_fleck"));

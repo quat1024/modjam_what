@@ -1,0 +1,11 @@
+v1.0:
+  - Intial release.
+  - for Modjam!
+
+v1.1:
+  - Include new art by towerofnix (crumb) and Spazmunki13 (bag)!
+  - New "glimmering crumb", which emits a small amount of light, to find your way in the dark.
+  - Boring internal changes:
+    - More robust handling of item NBT tags (less likely to unexpectedly mutate it, etc)
+    - Class relayout
+    - Breadcrumb pouches use an IItemHandler internally

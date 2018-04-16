@@ -13,40 +13,55 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Util {	
 	//item utils!
-	public static void setUpItem(Item i, String regName) {
+	public static void setUpItem(Item i, String regName) { //Spaghet
 		i.setRegistryName(new ResourceLocation(BreadcrumbTrail.MODID, regName));
 		i.setUnlocalizedName(BreadcrumbTrail.MODID + "." + regName);
 		i.setCreativeTab(BreadcrumbTrail.TAB);
 	}
 	
+	public static void setUpItem(Item i, ResourceLocation res) {
+		i.setRegistryName(res);
+		i.setUnlocalizedName(res.getResourceDomain() + "." + res.getResourcePath());
+		i.setCreativeTab(BreadcrumbTrail.TAB);
+	}
+	
+	//version of itemstack#splitStack with a simulate option
+	public static ItemStack splitStack(ItemStack stack, int count, boolean simulate) {
+		if(simulate) {
+			int extractionAmount = Math.min(count, stack.getCount());
+			ItemStack stack2 = stack.copy();
+			stack2.setCount(extractionAmount);
+			return stack2;
+		} else {
+			return stack.splitStack(count);
+		}
+	}
+	
 	public static boolean getItemNBTBoolean(ItemStack stack, String key, boolean def) {
-		verifyTag(stack);
 		if(!hasKey(stack, key)) return def;
 		
 		return stack.getTagCompound().getBoolean(key);
 	}
 	
 	public static void setItemNBTBoolean(ItemStack stack, String key, boolean val) {
-		verifyTag(stack);
+		verifyStackTag(stack);
 		
 		stack.getTagCompound().setBoolean(key, val);
 	}
 	
 	public static int getItemNBTInt(ItemStack stack, String key, int def) {
-		verifyTag(stack);
 		if(!hasKey(stack, key)) return def;
 		
 		return stack.getTagCompound().getInteger(key);
 	}
 	
 	public static void setItemNBTInt(ItemStack stack, String key, int val) {
-		verifyTag(stack);
+		verifyStackTag(stack);
 		
 		stack.getTagCompound().setInteger(key, val);
 	}
 	
 	public static BlockPos getItemNBTBlockPos(ItemStack stack, String key, BlockPos def) {
-		verifyTag(stack);
 		if(!hasKey(stack, key)) return def;
 		
 		NBTTagCompound posTag = stack.getTagCompound().getCompoundTag(key);
@@ -54,16 +69,17 @@ public class Util {
 	}
 	
 	public static void setItemNBTBlockPos(ItemStack stack, String key, BlockPos val) {
-		verifyTag(stack);
+		verifyStackTag(stack);
 		
 		stack.getTagCompound().setTag(key, NBTUtil.createPosTag(val));
 	}
 	
-	static void verifyTag(ItemStack stack) {
+	static void verifyStackTag(ItemStack stack) {
 		if(!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
 	}
 	
 	static boolean hasKey(ItemStack stack, String key) {
+		if(!stack.hasTagCompound()) return false;
 		return stack.getTagCompound().hasKey(key);
 	}
 	
@@ -87,7 +103,11 @@ public class Util {
 		else if (crumbs <= 300) qualifier = "lot";
 		else qualifier = "ton";
 		
-		return I18n.translateToLocal("breadcrumbtrail.crumbcount." + qualifier);
+		String str = I18n.translateToLocal("breadcrumbtrail.crumbcount." + qualifier); 
+		
+		if(BreadcrumbTrail.DEBUGEROO) {
+			return TextFormatting.RED + "debug count:" + crumbs;
+		} else return str;
 	}
 	
 	//hah!
