@@ -12,6 +12,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import quaternary.breadcrumbtrail.BreadcrumbTrail;
+import quaternary.breadcrumbtrail.item.ItemBreadcrumb;
 import quaternary.breadcrumbtrail.item.pouch.ItemBreadcrumbPouch;
 
 public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
@@ -28,9 +29,24 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 	public static final Item crumbItem = Items.AIR;
 	
 	@Override
-	public boolean matches(InventoryCrafting inv, World worldIn) {
-		ItemStack bag = findBag(inv);
-		ItemStack crumbs = findCrumbs(inv);
+	public boolean matches(InventoryCrafting inv, World world) {
+		ItemStack bag = ItemStack.EMPTY;
+		ItemStack crumbs = ItemStack.EMPTY;
+		
+		for(int i=0; i < inv.getSizeInventory(); i++) {
+			ItemStack stack = inv.getStackInSlot(i);
+			if(stack.isEmpty()) continue;
+			
+			if(bag.isEmpty() && stack.getItem() instanceof ItemBreadcrumbPouch) {
+				bag = stack; continue;
+			}
+			
+			if(crumbs.isEmpty() && stack.getItem() instanceof ItemBreadcrumb) {
+				crumbs = stack; continue;
+			}
+			
+			return false;
+		}
 		
 		if(bag.isEmpty() || crumbs.isEmpty() || !ItemBreadcrumbPouch.isOpen(bag)) return false;
 		
@@ -43,14 +59,13 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 	
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
-		ItemStack bag = findBag(inv);
-		ItemStack crumbs = findCrumbs(inv);
+		ItemStack result = find(inv, ItemBreadcrumbPouch.class).copy();
+		ItemStack crumbs = find(inv, ItemBreadcrumb.class);
 		
-		ItemStack result = bag.copy();
 		IItemHandler resultHandler = result.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 		ItemStack leftover = resultHandler.insertItem(0, crumbs, false);
 		
-		int crumbIndex = findCrumbIndex(inv);
+		int crumbIndex = findIndex(inv, ItemBreadcrumb.class);
 		if(crumbIndex != -1) inv.setInventorySlotContents(crumbIndex, leftover);
 		
 		return result;
@@ -66,39 +81,25 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 		return ItemStack.EMPTY;
 	}
 	
-	//The most beautiful code i have ever written
-	
-	private ItemStack findBag(InventoryCrafting inv) {
+	private ItemStack find(InventoryCrafting inv, Class itemClass) {
 		for(int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if(stack.isEmpty()) continue;
 			Item item = stack.getItem();
 			
-			if(item instanceof ItemBreadcrumbPouch) return stack;
+			if(itemClass.isInstance(item)) return stack;
 		}
 		
 		return ItemStack.EMPTY;
 	}
 	
-	private ItemStack findCrumbs(InventoryCrafting inv) {
+	private int findIndex(InventoryCrafting inv, Class itemClass) {
 		for(int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if(stack.isEmpty()) continue;
 			Item item = stack.getItem();
 			
-			if(item.equals(crumbItem)) return stack;
-		}
-		
-		return ItemStack.EMPTY;
-	}
-	
-	private int findCrumbIndex(InventoryCrafting inv) {
-		for(int i = 0; i < inv.getSizeInventory(); i++) {
-			ItemStack stack = inv.getStackInSlot(i);
-			if(stack.isEmpty()) continue;
-			Item item = stack.getItem();
-			
-			if(item.equals(crumbItem)) return i;
+			if(itemClass.isInstance(item)) return i;
 		}
 		
 		return -1;

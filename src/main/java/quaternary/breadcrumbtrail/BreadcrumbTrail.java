@@ -24,6 +24,7 @@ import quaternary.breadcrumbtrail.block.*;
 import quaternary.breadcrumbtrail.item.ItemBreadcrumb;
 import quaternary.breadcrumbtrail.item.pouch.ItemBreadcrumbPouch;
 import quaternary.breadcrumbtrail.item.ItemSimple;
+import quaternary.breadcrumbtrail.recipe.RecipeEmptyPouch;
 import quaternary.breadcrumbtrail.recipe.RecipeFillPouch;
 
 import java.util.*;
@@ -90,6 +91,7 @@ public class BreadcrumbTrail {
 			IForgeRegistry<IRecipe> reg = e.getRegistry();
 			
 			reg.register(new RecipeFillPouch());
+			reg.register(new RecipeEmptyPouch());
 		}
 	}
 	

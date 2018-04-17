@@ -14,31 +14,29 @@ import quaternary.breadcrumbtrail.util.ItemHandlerHelper2;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CapabilityProviderPouch implements ICapabilityProvider {
-	//ItemHandlerPouch handler;
-	
+public class CapabilityProviderPouch implements ICapabilityProvider {	
 	ItemStack pouch;
 	
-	ItemStackHandler handler = new ItemStackHandler(8){
+	ItemStackHandler handler = new ItemStackHandler(8){ //TODO config stack size
 		@Nonnull
 		@Override
 		public ItemStack insertItem(int slot, @Nonnull ItemStack stackToInsert, boolean simulate) {
-			Item first = findFirstItem();
+			Item first = ItemHandlerHelper2.findFirstItem(this);
 			
 			if(first == Items.AIR || first.equals(stackToInsert.getItem())) return super.insertItem(slot, stackToInsert, simulate);
 			else return stackToInsert; //No entry!
 		}
 		
+		@Nonnull
+		@Override
+		public ItemStack extractItem(int slot, int amount, boolean simulate) {
+			ItemHandlerHelper2.consolidateSameItems(this);
+			return super.extractItem(slot, amount, simulate);
+		}
+		
 		@Override
 		protected void onContentsChanged(int slot) {
 			pouch.setTagInfo("BagContents", serializeNBT());
-		}
-		
-		Item findFirstItem() {
-			for(ItemStack s : stacks) {
-				if(!s.isEmpty()) return s.getItem();
-			}
-			return Items.AIR;
 		}
 	};
 	
