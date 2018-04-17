@@ -1,13 +1,12 @@
 package quaternary.breadcrumbtrail.recipe;
 
-import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -24,9 +23,6 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 	public boolean isDynamic() {
 		return true;
 	}
-	
-	@GameRegistry.ObjectHolder(BreadcrumbTrail.MODID + ":breadcrumb")
-	public static final Item crumbItem = Items.AIR;
 	
 	@Override
 	public boolean matches(InventoryCrafting inv, World world) {
@@ -57,18 +53,51 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 		return !ItemStack.areItemStacksEqual(crumbs, leftover);
 	}
 	
+	ThreadLocal<ItemStack> leftoverStack = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
+	ThreadLocal<Integer> leftoverSlot = ThreadLocal.withInitial(() -> -1);
+	
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
-		ItemStack result = find(inv, ItemBreadcrumbPouch.class).copy();
-		ItemStack crumbs = find(inv, ItemBreadcrumb.class);
+		ItemStack bagClone = ItemStack.EMPTY;
+		ItemStack crumbs = ItemStack.EMPTY;
+		int crumbSlot = -1;
 		
-		IItemHandler resultHandler = result.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		for(int i=0; i < inv.getSizeInventory(); i++) {
+			ItemStack stack = inv.getStackInSlot(i);
+			if(stack.isEmpty()) continue;
+			
+			if(bagClone.isEmpty() && stack.getItem() instanceof ItemBreadcrumbPouch) {
+				bagClone = stack.copy();
+				continue;
+			}
+			
+			if(crumbs.isEmpty() && stack.getItem() instanceof ItemBreadcrumb) {
+				crumbs = stack;
+				crumbSlot = i;
+			}
+		}
+		
+		IItemHandler resultHandler = bagClone.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		
 		ItemStack leftover = resultHandler.insertItem(0, crumbs, false);
+		System.out.println(leftover);
 		
-		int crumbIndex = findIndex(inv, ItemBreadcrumb.class);
-		if(crumbIndex != -1) inv.setInventorySlotContents(crumbIndex, leftover);
+		leftoverStack.set(leftover);
+		leftoverSlot.set(crumbSlot);
 		
-		return result;
+		return bagClone;
+	}
+	
+	@Override
+	public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+		NonNullList<ItemStack> ret = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+				
+		for (int i = 0; i < ret.size(); i++) {
+			if(i == leftoverSlot.get()) {
+				ret.set(i, leftoverStack.get());
+			}
+		}
+		return ret;
 	}
 	
 	@Override
@@ -79,29 +108,5 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 	@Override
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;
-	}
-	
-	private ItemStack find(InventoryCrafting inv, Class itemClass) {
-		for(int i = 0; i < inv.getSizeInventory(); i++) {
-			ItemStack stack = inv.getStackInSlot(i);
-			if(stack.isEmpty()) continue;
-			Item item = stack.getItem();
-			
-			if(itemClass.isInstance(item)) return stack;
-		}
-		
-		return ItemStack.EMPTY;
-	}
-	
-	private int findIndex(InventoryCrafting inv, Class itemClass) {
-		for(int i = 0; i < inv.getSizeInventory(); i++) {
-			ItemStack stack = inv.getStackInSlot(i);
-			if(stack.isEmpty()) continue;
-			Item item = stack.getItem();
-			
-			if(itemClass.isInstance(item)) return i;
-		}
-		
-		return -1;
 	}
 }

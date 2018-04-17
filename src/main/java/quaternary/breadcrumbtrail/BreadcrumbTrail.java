@@ -91,7 +91,7 @@ public class BreadcrumbTrail {
 			IForgeRegistry<IRecipe> reg = e.getRegistry();
 			
 			reg.register(new RecipeFillPouch());
-			reg.register(new RecipeEmptyPouch());
+			//reg.register(new RecipeEmptyPouch());
 		}
 	}
 	

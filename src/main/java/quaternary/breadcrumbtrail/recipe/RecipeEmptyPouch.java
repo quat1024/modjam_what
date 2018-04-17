@@ -24,10 +24,7 @@ public class RecipeEmptyPouch extends IForgeRegistryEntry.Impl<IRecipe> implemen
 	}
 	
 	@Override
-	public boolean matches(InventoryCrafting inv, World world) {
-		System.out.println(world.isRemote);
-		System.out.println(this);
-		
+	public boolean matches(InventoryCrafting inv, World world) {		
 		ItemStack bag = ItemStack.EMPTY;
 		
 		for(int i=0; i < inv.getSizeInventory(); i++) {
@@ -49,15 +46,25 @@ public class RecipeEmptyPouch extends IForgeRegistryEntry.Impl<IRecipe> implemen
 	
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
-		new Error().printStackTrace();
+		ItemStack bagClone = ItemStack.EMPTY;
+		int bagIndex = -1;
 		
-		ItemStack result = find(inv, ItemBreadcrumbPouch.class).copy();
-		int bagIndex = findIndex(inv, ItemBreadcrumbPouch.class);
+		for(int i=0; i < inv.getSizeInventory(); i++) {
+			ItemStack stack = inv.getStackInSlot(i);
+			if(stack.isEmpty()) continue;
+			
+			if(stack.getItem() instanceof ItemBreadcrumbPouch) {
+				bagClone = stack.copy();
+				bagIndex = i;
+				break;
+			}
+		}
 		
-		IItemHandler handler = result.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		IItemHandler handler = bagClone.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 		ItemStack extractedCrumbs = handler.extractItem(0, 64, false);
 		inv.setInventorySlotContents(bagIndex, extractedCrumbs);
-		return result;
+		
+		return bagClone;
 	}
 	
 	@Override
@@ -68,29 +75,5 @@ public class RecipeEmptyPouch extends IForgeRegistryEntry.Impl<IRecipe> implemen
 	@Override
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;
-	}
-	
-	private ItemStack find(InventoryCrafting inv, Class itemClass) {
-		for(int i = 0; i < inv.getSizeInventory(); i++) {
-			ItemStack stack = inv.getStackInSlot(i);
-			if(stack.isEmpty()) continue;
-			Item item = stack.getItem();
-			
-			if(itemClass.isInstance(item)) return stack;
-		}
-		
-		return ItemStack.EMPTY;
-	}
-	
-	private int findIndex(InventoryCrafting inv, Class itemClass) {
-		for(int i = 0; i < inv.getSizeInventory(); i++) {
-			ItemStack stack = inv.getStackInSlot(i);
-			if(stack.isEmpty()) continue;
-			Item item = stack.getItem();
-			
-			if(itemClass.isInstance(item)) return i;
-		}
-		
-		return -1;
 	}
 }
