@@ -3,11 +3,12 @@ package quaternary.breadcrumbtrail.ai;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import quaternary.breadcrumbtrail.block.BlockBreadcrumb;
+import quaternary.breadcrumbtrail.block.BlockBreadcrumbBase;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -50,8 +51,15 @@ public class EntityAIEatBreadcrumb extends EntityAIBase {
 	}
 	
 	@Override
+	public int getMutexBits() {
+		return 5;
+	}
+	
+	@Override
 	public void startExecuting() {
 		if(cacheNearbyCrumbs.isEmpty()) return; //somehow
+		
+		if(breadEater instanceof EntityTameable && ((EntityTameable)breadEater).isSitting()) return;
 		
 		breadEater.getNavigator().clearPath();
 		BlockPos p = cacheNearbyCrumbs.get(0);
@@ -100,7 +108,7 @@ public class EntityAIEatBreadcrumb extends EntityAIBase {
 	}
 	
 	private boolean isCrumb(IBlockState state) {
-		return state.getBlock() instanceof BlockBreadcrumb;
+		return state.getBlock() instanceof BlockBreadcrumbBase;
 	}
 	
 	private List<BlockPos> findNearbyCrumbs(BlockPos myPosition) {
@@ -108,7 +116,7 @@ public class EntityAIEatBreadcrumb extends EntityAIBase {
 		ArrayList<BlockPos> breadPos = new ArrayList<>();
 		
 		for(BlockPos.MutableBlockPos p : allPositions) {
-			if(world.getBlockState(p).getBlock() instanceof BlockBreadcrumb) breadPos.add(p.toImmutable());
+			if(isCrumb(world.getBlockState(p))) breadPos.add(p.toImmutable());
 		}
 		
 		Collections.shuffle(breadPos);
