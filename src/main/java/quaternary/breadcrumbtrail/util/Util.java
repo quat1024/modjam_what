@@ -1,4 +1,4 @@
-package quaternary.breadcrumbtrail;
+package quaternary.breadcrumbtrail.util;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -10,6 +10,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import quaternary.breadcrumbtrail.BreadcrumbTrail;
+
+import java.util.Locale;
 
 public class Util {	
 	//item utils!
@@ -25,18 +28,6 @@ public class Util {
 		i.setCreativeTab(BreadcrumbTrail.TAB);
 	}
 	
-	//version of itemstack#splitStack with a simulate option
-	public static ItemStack splitStack(ItemStack stack, int count, boolean simulate) {
-		if(simulate) {
-			int extractionAmount = Math.min(count, stack.getCount());
-			ItemStack stack2 = stack.copy();
-			stack2.setCount(extractionAmount);
-			return stack2;
-		} else {
-			return stack.splitStack(count);
-		}
-	}
-	
 	public static boolean getItemNBTBoolean(ItemStack stack, String key, boolean def) {
 		if(!hasKey(stack, key)) return def;
 		
@@ -47,18 +38,6 @@ public class Util {
 		verifyStackTag(stack);
 		
 		stack.getTagCompound().setBoolean(key, val);
-	}
-	
-	public static int getItemNBTInt(ItemStack stack, String key, int def) {
-		if(!hasKey(stack, key)) return def;
-		
-		return stack.getTagCompound().getInteger(key);
-	}
-	
-	public static void setItemNBTInt(ItemStack stack, String key, int val) {
-		verifyStackTag(stack);
-		
-		stack.getTagCompound().setInteger(key, val);
 	}
 	
 	public static BlockPos getItemNBTBlockPos(ItemStack stack, String key, BlockPos def) {
@@ -85,13 +64,15 @@ public class Util {
 	
 	//number formatting utils!
 	@SideOnly(Side.CLIENT)
-	public static String vagueCrumbCount(int crumbs) {
-		//hmm
-		if(crumbs < 0) return I18n.translateToLocal("breadcrumbtrail.crumbcount.hahawhat").replace('&', '\u00A7');
+	public static String vagueCrumbCount(int crumbs, ItemStack stack) {
+		String itemName = stack.getItem().getItemStackDisplayName(stack).toLowerCase();
 		
-		if(crumbs == 0) return I18n.translateToLocal("breadcrumbtrail.crumbcount.zero");
-		else if(crumbs == 1) return I18n.translateToLocal("breadcrumbtrail.crumbcount.one");
-		else if(crumbs <= 4) return I18n.translateToLocalFormatted("breadcrumbtrail.crumbcount.exactplural", crumbs);
+		//hmm
+		if(crumbs < 0) return I18n.translateToLocalFormatted("breadcrumbtrail.crumbcount.hahawhat", itemName).replace('&', '\u00A7');
+		
+		if(crumbs == 0) return I18n.translateToLocalFormatted("breadcrumbtrail.crumbcount.zero", itemName);
+		else if(crumbs == 1) return I18n.translateToLocalFormatted("breadcrumbtrail.crumbcount.one", itemName);
+		else if(crumbs <= 8) return I18n.translateToLocalFormatted("breadcrumbtrail.crumbcount.exactplural", crumbs, itemName);
 		
 		//fight me irl
 		String qualifier;
@@ -103,15 +84,24 @@ public class Util {
 		else if (crumbs <= 300) qualifier = "lot";
 		else qualifier = "ton";
 		
-		String str = I18n.translateToLocal("breadcrumbtrail.crumbcount." + qualifier); 
+		String str = I18n.translateToLocalFormatted("breadcrumbtrail.crumbcount." + qualifier, itemName); 
 		
 		if(BreadcrumbTrail.DEBUGEROO) {
 			return TextFormatting.RED + "debug count:" + crumbs;
 		} else return str;
 	}
 	
-	//hah!
+	//text utils!
 	public static String italicise(String in) {
 		return TextFormatting.ITALIC + in + TextFormatting.RESET;
+	}
+	
+	//math utils!
+	public static int distSquared3d(BlockPos a, BlockPos b) {
+		return sq(a.getX() - b.getX()) + sq(a.getY() - b.getY()) + sq(a.getZ() - b.getZ());
+	}
+	
+	public static int sq(int i) {
+		return i * i;
 	}
 }

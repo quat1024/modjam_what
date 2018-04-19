@@ -6,7 +6,7 @@ public class BlockBreadcrumb extends BlockBreadcrumbBase {
 	}
 	
 	@Override
-	int getDurabilityBarColor() {
+	public int getDurabilityBarColor() {
 		return 0x844f2e; //dark brownish
 	}
 }

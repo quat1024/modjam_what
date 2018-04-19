@@ -35,14 +35,29 @@ public class ItemHandlerHelper2 {
 		return Items.AIR;
 	}
 	
-	/** Don't call if the items are not all the same. */
-	public static void consolidateSameItems(IItemHandler handler) {
-		Item item = findFirstItem(handler);
-		int count = countItems(handler);
-		
-		clear(handler);
-		
-		//dump into the inventory
-		ItemHandlerHelper.insertItem(handler, new ItemStack(item, count), false);
+	public static ItemStack findFirstItemStack(IItemHandler handler) {
+		for(int i=0; i < handler.getSlots(); i++) {
+			if(!handler.getStackInSlot(i).isEmpty()) return handler.getStackInSlot(i); 
+		}
+		return ItemStack.EMPTY;
+	}
+	
+	public static ItemStack extractItem(IItemHandler handler, int count, boolean simulate) {
+		ItemStack extractedSoFar = ItemStack.EMPTY;
+		int neededCount = count;
+		for(int i=0; i < handler.getSlots(); i++) {
+			ItemStack extracted = handler.extractItem(i, neededCount, true);
+			if(extractedSoFar.isEmpty()) {
+				extractedSoFar = extracted.copy();
+			} else if(ItemHandlerHelper.canItemStacksStack(extracted, extractedSoFar)) {
+				extractedSoFar.grow(extracted.getCount());
+			}
+			
+			if(!simulate) handler.extractItem(i, neededCount, false);
+			neededCount -= extracted.getCount();
+			
+			if(neededCount <= 0) break;
+		}
+		return extractedSoFar;
 	}
 }

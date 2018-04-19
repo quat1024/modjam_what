@@ -28,7 +28,7 @@ public class EntityAIEatBreadcrumb extends EntityAIBase {
 	private boolean immediatelyRetryFlag = false;
 	
 	SoundEvent eatSound = SoundEvents.ENTITY_GENERIC_EAT;
-	private int chance = 30;
+	private int chance;
 	
 	public EntityAIEatBreadcrumb(EntityLiving breadEater, @Nullable SoundEvent eatSound, int chance) {
 		this.breadEater = breadEater;
@@ -52,7 +52,7 @@ public class EntityAIEatBreadcrumb extends EntityAIBase {
 	
 	@Override
 	public int getMutexBits() {
-		return 5;
+		return 0;
 	}
 	
 	@Override

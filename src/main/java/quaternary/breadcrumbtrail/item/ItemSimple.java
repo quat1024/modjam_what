@@ -1,7 +1,7 @@
 package quaternary.breadcrumbtrail.item;
 
 import net.minecraft.item.Item;
-import quaternary.breadcrumbtrail.Util;
+import quaternary.breadcrumbtrail.util.Util;
 
 public class ItemSimple extends Item {
 	public ItemSimple(String name) {

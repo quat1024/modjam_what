@@ -21,7 +21,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.*;
 import quaternary.breadcrumbtrail.*;
-import quaternary.breadcrumbtrail.Util;
+import quaternary.breadcrumbtrail.item.ItemBreadcrumb;
+import quaternary.breadcrumbtrail.util.Util;
 import quaternary.breadcrumbtrail.block.BlockBreadcrumb;
 import quaternary.breadcrumbtrail.block.BlockBreadcrumbBase;
 import quaternary.breadcrumbtrail.util.ItemHandlerHelper2;
@@ -51,6 +52,8 @@ public class ItemBreadcrumbPouch extends Item {
 		//make sure it doesnt instantly place a crumb
 		setLastPosition(heldStack, player.getPosition());
 		
+		world.playSound(player, player.posX, player.posY, player.posZ, SoundEvents.BLOCK_CLOTH_PLACE, SoundCategory.PLAYERS, 1f, 1f);
+		
 		return new ActionResult<>(EnumActionResult.SUCCESS, heldStack);
 	}
 	
@@ -73,6 +76,9 @@ public class ItemBreadcrumbPouch extends Item {
 	@GameRegistry.ObjectHolder(BreadcrumbTrail.MODID + ":breadcrumb")
 	public static final Block BREADCRUMB_BLOCK = Blocks.DIAMOND_BLOCK;
 	
+	final static int BREADCRUMB_DISTANCE = 9;
+	final static int BREADCRUMB_DISTANCE_SQ = BREADCRUMB_DISTANCE * BREADCRUMB_DISTANCE;
+	
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
 		if(world.isRemote || !isOpen(stack) || !(entity instanceof EntityPlayer)) return;
@@ -83,19 +89,16 @@ public class ItemBreadcrumbPouch extends Item {
 		BlockPos entPos = entity.getPosition();
 		BlockPos lastCrumbPos = getLastPosition(stack);
 		
-		int dx = entPos.getX() - lastCrumbPos.getX();
-		int dz = entPos.getZ() - lastCrumbPos.getZ();
-		dx *= dx; dz *= dz;
-		int distSquared = dx + dz;
+		int distSquared = Util.distSquared3d(entPos, lastCrumbPos);
 		
-		if(distSquared >= 9 * 9) {
+		if(distSquared >= BREADCRUMB_DISTANCE_SQ) {
 			//is it ok to place one here?
 			if(world.getBlockState(entPos).getBlock() instanceof BlockBreadcrumb) return;
 			if(!world.getBlockState(entPos).getBlock().isReplaceable(world, entPos)) return;
 			if(!BREADCRUMB_BLOCK.canPlaceBlockAt(world, entPos)) return;
 			
 			//place a crumb
-			Item crumb = handler.extractItem(0, 1, false).getItem();
+			Item crumb = ItemHandlerHelper2.extractItem(handler, 1, false).getItem();
 			
 			setLastPosition(stack, entPos);
 			world.setBlockState(entPos, Block.getBlockFromItem(crumb).getDefaultState(), 3);
@@ -113,17 +116,14 @@ public class ItemBreadcrumbPouch extends Item {
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 		if(tab == BreadcrumbTrail.TAB) {
-			for(boolean open : new boolean[]{false, true}) {
-				for(int crumbCount : new int[]{0, MAX_CRUMBS/2, MAX_CRUMBS}) {
-					for(BlockBreadcrumbBase crumb : BreadcrumbTrail.CRUMBS) {
-						ItemStack stack = pouchStack.copy();
-						setOpen(stack, open);
-						fillBagWith(stack, new ItemStack(Item.getItemFromBlock(crumb), crumbCount));
-						items.add(stack);
-					}
+			for(int crumbCount : new int[]{0, MAX_CRUMBS/2, MAX_CRUMBS}) {
+				for(BlockBreadcrumbBase crumb : BreadcrumbTrail.CRUMBS) {
+					ItemStack stack = pouchStack.copy();
+					setOpen(stack, false);
+					fillBagWith(stack, new ItemStack(Item.getItemFromBlock(crumb), crumbCount));
+					items.add(stack);
 				}
 			}
-			
 		}
 	}
 	
@@ -147,15 +147,26 @@ public class ItemBreadcrumbPouch extends Item {
 	@Override
 	public int getRGBDurabilityForDisplay(ItemStack stack) {
 		if(getFillPercentage(stack) < 0.1) return 0xee4422;
-		return 0x844f2e;
+		
+		IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		if(handler == null) return 0xff0000;
+		
+		Item firstItem = ItemHandlerHelper2.findFirstItem(handler);
+		if(firstItem instanceof ItemBreadcrumb) {
+			return ((ItemBreadcrumb)firstItem).getDurabilityBarColor();
+		} else return 0xff0000;
 	}
 	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {		
-		int count = countCrumbs(stack);
+	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+		IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		if(handler == null) return;
 		
-		String vagueCount = Util.vagueCrumbCount(count);
+		int count = ItemHandlerHelper2.countItems(handler);
+		ItemStack crumb = ItemHandlerHelper2.findFirstItemStack(handler);
+		
+		String vagueCount = Util.vagueCrumbCount(count, crumb);
 		tooltip.add(vagueCount);
 		tooltip.add(I18n.translateToLocal(isOpen(stack) ? "breadcrumbtrail.open" : "breadcrumbtrail.closed"));
 		

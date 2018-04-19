@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 public class CapabilityProviderPouch implements ICapabilityProvider {	
 	ItemStack pouch;
 	
-	ItemStackHandler handler = new ItemStackHandler(8){ //TODO config stack size
+	ItemStackHandler handler = new ItemStackHandler(8){ //TODO config stack size		
 		@Nonnull
 		@Override
 		public ItemStack insertItem(int slot, @Nonnull ItemStack stackToInsert, boolean simulate) {
@@ -25,13 +25,6 @@ public class CapabilityProviderPouch implements ICapabilityProvider {
 			
 			if(first == Items.AIR || first.equals(stackToInsert.getItem())) return super.insertItem(slot, stackToInsert, simulate);
 			else return stackToInsert; //No entry!
-		}
-		
-		@Nonnull
-		@Override
-		public ItemStack extractItem(int slot, int amount, boolean simulate) {
-			ItemHandlerHelper2.consolidateSameItems(this);
-			return super.extractItem(slot, amount, simulate);
 		}
 		
 		@Override

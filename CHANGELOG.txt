@@ -3,9 +3,15 @@ v1.0:
   - for Modjam!
 
 v1.1:
-  - Include new art by towerofnix (crumb) and Spazmunki13 (bag)!
-  - New "glimmering crumb", which emits a small amount of light, to find your way in the dark.
+  - [WARN] **This update will clear the contents of your breadcrumb pouches**, but it should not happen again.
+  - [New] **Include new art by towerofnix (crumb) and Spazmunki13 (bag)!**
+  - [New] Added the glimmering breadcrumb, craftable with a tiny bit of glowstone. It emits a small amount of light. Find your way around in the dark!
+  - [Tweak] Crafting crumbs into the bag (temporarily!) changed to take fewer crumbs at a time. You can spread the crumbs out over 8 inventory slots, but only up to 8 crumbs will enter the bag during one craft operation. The old method was convenient, but very buggy, and could lead to things like magically deleting the bag! What fun!
+  - [Tweak] Breadcrumbs are now insta-punch to collect off the ground.
+  - [Tweak] Breadcrumb trails will form more reliably in twisty passages (they now take the Y coordinate into account when determining distance since the last crumb)
+  - [Tweak] There's now a sound for opening the bag!
+  - [Tweak] Small improvements to creature-eat-crumb AI
   - Boring internal changes:
-    - More robust handling of item NBT tags (less likely to unexpectedly mutate it, etc)
-    - Class relayout
-    - Breadcrumb pouches use an IItemHandler internally
+    - Cleaned up some Red Bull-infused code. Don't do energy drinks kids
+    - Breadcrumb pouches use an IItemHandler internally 👀
+    - Opened the door to including more types of breadcrumbs in the future

@@ -44,7 +44,7 @@ public class BreadcrumbTrail {
 	public static List<Block> BLOCKS = new ArrayList<>();
 	public static List<Item> ITEMS = new ArrayList<>();
 	
-	public static final boolean DEBUGEROO = true;
+	public static final boolean DEBUGEROO = false;
 	
 	static {
 		//do this first so it shows first in creative
@@ -54,9 +54,9 @@ public class BreadcrumbTrail {
 		CRUMBS.add(new BlockBreadcrumbGlowing());
 		
 		for(BlockBreadcrumbBase crumb : CRUMBS) {
-			BlockBase b = crumb.build();
-			BLOCKS.add(b);
-			ITEMS.add(new ItemBreadcrumb(b));
+			crumb.build();
+			BLOCKS.add(crumb);
+			ITEMS.add(new ItemBreadcrumb(crumb));
 		}
 		
 		ITEMS.add(new ItemSimple("glowstone_fleck"));
@@ -91,7 +91,7 @@ public class BreadcrumbTrail {
 			IForgeRegistry<IRecipe> reg = e.getRegistry();
 			
 			reg.register(new RecipeFillPouch());
-			//reg.register(new RecipeEmptyPouch());
+			//reg.register(new RecipeEmptyPouch()); //dangers lie within
 		}
 	}
 	

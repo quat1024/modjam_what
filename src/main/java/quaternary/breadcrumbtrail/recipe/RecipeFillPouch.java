@@ -7,9 +7,10 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.*;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import quaternary.breadcrumbtrail.BreadcrumbTrail;
 import quaternary.breadcrumbtrail.item.ItemBreadcrumb;
 import quaternary.breadcrumbtrail.item.pouch.ItemBreadcrumbPouch;
@@ -26,6 +27,24 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 	
 	@Override
 	public boolean matches(InventoryCrafting inv, World world) {
+		Triple<Boolean, ItemStack, ItemStack> triple = findBagAndCrumbs(inv);
+		
+		if(!triple.getLeft()) return false;
+		
+		ItemStack bag = triple.getMiddle();
+		ItemStack crumbs = triple.getRight();
+		
+		IItemHandler handler = bag.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		if(handler == null) return false;
+		
+		ItemStack leftover = ItemHandlerHelper.insertItem(handler, crumbs, true);
+		
+		return leftover.isEmpty();
+	}
+	
+	private final Triple<Boolean, ItemStack, ItemStack> INVALID_RECIPE_TRIPLE = Triple.of(false, ItemStack.EMPTY, ItemStack.EMPTY);
+	
+	private Triple<Boolean, ItemStack, ItemStack> findBagAndCrumbs(InventoryCrafting inv) {
 		ItemStack bag = ItemStack.EMPTY;
 		ItemStack crumbs = ItemStack.EMPTY;
 		
@@ -33,26 +52,47 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 			ItemStack stack = inv.getStackInSlot(i);
 			if(stack.isEmpty()) continue;
 			
-			if(bag.isEmpty() && stack.getItem() instanceof ItemBreadcrumbPouch) {
+			if(bag.isEmpty() && stack.getItem() instanceof ItemBreadcrumbPouch && ItemBreadcrumbPouch.isOpen(stack)) {
 				bag = stack; continue;
 			}
 			
-			if(crumbs.isEmpty() && stack.getItem() instanceof ItemBreadcrumb) {
-				crumbs = stack; continue;
+			if(stack.getItem() instanceof ItemBreadcrumb) {
+				if(crumbs.isEmpty()) {
+					ItemStack stack2 = stack.copy();
+					stack2.setCount(1);
+					crumbs = stack2;
+					continue;
+				} else if(ItemHandlerHelper.canItemStacksStack(crumbs, stack)) {
+					crumbs.grow(1);
+					continue;
+				}
 			}
 			
-			return false;
+			return INVALID_RECIPE_TRIPLE;
 		}
 		
-		if(bag.isEmpty() || crumbs.isEmpty() || !ItemBreadcrumbPouch.isOpen(bag)) return false;
+		if(bag.isEmpty() || crumbs.isEmpty()) return INVALID_RECIPE_TRIPLE;
 		
-		IItemHandler handler = bag.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-		
-		ItemStack leftover = handler.insertItem(0, crumbs, true);
-		
-		return !ItemStack.areItemStacksEqual(crumbs, leftover);
+		return Triple.of(true, bag, crumbs);
 	}
 	
+	@Override
+	public ItemStack getCraftingResult(InventoryCrafting inv) {
+		Triple<Boolean, ItemStack, ItemStack> triple = findBagAndCrumbs(inv);
+		
+		if(!triple.getLeft()) return ItemStack.EMPTY;
+		
+		ItemStack bag = triple.getMiddle().copy();
+		ItemStack crumbs = triple.getRight();
+		
+		IItemHandler handler = bag.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		if(handler == null) return ItemStack.EMPTY;
+		
+		ItemHandlerHelper.insertItem(handler, crumbs, false);
+		return bag;
+	}
+	
+	/*
 	ThreadLocal<ItemStack> leftoverStack = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
 	ThreadLocal<Integer> leftoverSlot = ThreadLocal.withInitial(() -> -1);
 	
@@ -99,6 +139,7 @@ public class RecipeFillPouch extends IForgeRegistryEntry.Impl<IRecipe> implement
 		}
 		return ret;
 	}
+	*/
 	
 	@Override
 	public boolean canFit(int width, int height) {

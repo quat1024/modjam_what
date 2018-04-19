@@ -23,12 +23,10 @@ public class BlockBase extends Block {
 		this.name = name;
 	}
 	
-	public BlockBase build() {
+	public void build() {
 		setRegistryName(new ResourceLocation(BreadcrumbTrail.MODID, name));
 		setUnlocalizedName(BreadcrumbTrail.MODID + "." + name);
 		setCreativeTab(BreadcrumbTrail.TAB);
-		
-		return this;
 	}
 	//End spaghet
 	

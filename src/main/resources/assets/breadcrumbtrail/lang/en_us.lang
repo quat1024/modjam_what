@@ -1,17 +1,17 @@
 breadcrumbtrail.crumbcount.zero=Empty
-breadcrumbtrail.crumbcount.one=1 crumb
-breadcrumbtrail.crumbcount.exactplural=%s crumbs
-breadcrumbtrail.crumbcount.few=A few crumbs
-breadcrumbtrail.crumbcount.handful=A handful of crumbs
-breadcrumbtrail.crumbcount.couple=A couple crumbs
-breadcrumbtrail.crumbcount.fair=A fair amount of crumbs
-breadcrumbtrail.crumbcount.sizable=A sizable number of crumbs
-breadcrumbtrail.crumbcount.lot=A lot of crumbs
-breadcrumbtrail.crumbcount.ton=A ton of crumbs
+breadcrumbtrail.crumbcount.one=1 %s
+breadcrumbtrail.crumbcount.exactplural=%s %ss
+breadcrumbtrail.crumbcount.few=A few %ss
+breadcrumbtrail.crumbcount.handful=A handful of %ss
+breadcrumbtrail.crumbcount.couple=A couple %ss
+breadcrumbtrail.crumbcount.fair=A fair amount of %ss
+breadcrumbtrail.crumbcount.sizable=A sizable number of %ss
+breadcrumbtrail.crumbcount.lot=A lot of %ss
+breadcrumbtrail.crumbcount.ton=A ton of %ss
 
 #& is replaced with section signs in-code
 #idk... didn't want to run in to weird encoding issues
-breadcrumbtrail.crumbcount.hahawhat=&kMISSINGNO&r crumbs
+breadcrumbtrail.crumbcount.hahawhat=&kMISSINGNO&r %s
 
 breadcrumbtrail.open=Open
 breadcrumbtrail.closed=Closed
@@ -20,7 +20,10 @@ breadcrumbtrail.breadcrumb_pouch.hint1=%s to open and close
 breadcrumbtrail.breadcrumb_pouch.hint2=When open, fill with crumbs by crafting
 
 tile.breadcrumbtrail.breadcrumb.name=Breadcrumb
+tile.breadcrumbtrail.breadcrumb_glowing.name=Glimmering Breadcrumb
+
 item.breadcrumbtrail.breadcrumb_pouch.name=Breadcrumb Pouch
+item.breadcrumbtrail.glowstone_fleck.name=Glowstone Fleck
 
 itemGroup.breadcrumbtrail=Breadcrumb Trail
 

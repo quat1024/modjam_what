@@ -26,7 +26,7 @@ public abstract class BlockBreadcrumbBase extends BlockBase {
 		setSoundType(SoundType.SNOW);
 	}
 	
-	abstract int getDurabilityBarColor(); //the pouch durability bar color in 0xRRGGBB format
+	public abstract int getDurabilityBarColor(); //the pouch durability bar color in 0xRRGGBB format
 	
 	@SideOnly(Side.CLIENT)
 	@Override
